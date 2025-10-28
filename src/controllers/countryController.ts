@@ -1,5 +1,10 @@
 import * as countryService from '../services/countryService';
 import { Request, Response } from 'express';
+import { AppError } from '../utils/errorHandler';
+import { CACHE_DIR } from '../config/path';
+
+import fs from 'fs';
+import path from 'path';
 
 export const refreshCountriesController = async (
   req: Request,
@@ -39,4 +44,24 @@ export const deleteCountryByNameController = async (
   const { name } = req.params;
   await countryService.deleteCountryByName(name);
   res.status(204).send();
+};
+
+export const getStatusController = async (req: Request, res: Response) => {
+  const status = await countryService.getApiStatus();
+  res.status(200).json(status);
+};
+
+export const getSummaryImageController = (req: Request, res: Response) => {
+  const imagePath = path.join(CACHE_DIR, 'summary.png');
+
+  // Check if the file exists
+  if (!fs.existsSync(imagePath)) {
+    throw new AppError(
+      404,
+      'Summary image not found. Please run the refresh endpoint first.'
+    );
+  }
+
+  // Send the file as the response
+  res.sendFile(imagePath);
 };

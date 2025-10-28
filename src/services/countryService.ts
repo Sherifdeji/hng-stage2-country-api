@@ -202,3 +202,18 @@ export async function deleteCountryByName(name: string) {
     throw error;
   }
 }
+
+export async function getApiStatus() {
+  const status = await prisma.apiStatus.findUnique({
+    where: { key: 'global' },
+  });
+
+  if (!status) {
+    throw new AppError(
+      404,
+      'API status not available. Please run the refresh endpoint first.'
+    );
+  }
+
+  return status;
+}
