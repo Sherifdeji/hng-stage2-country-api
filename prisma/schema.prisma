@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Country {
+  id                Int      @id @default(autoincrement())
+  name              String   @unique // Required, and @unique for upsert
+  capital           String?
+  region            String?
+  population        Int // Required
+  currency_code     String? // Optional, per task rules
+  exchange_rate     Float? // Optional, per task rules
+  estimated_gdp     Float? // Optional, per task rules (can be 0 or null)
+  flag_url          String?
+  last_refreshed_at DateTime
+
+  // Add indexes for faster filtering
+  @@index([region])
+  @@index([currency_code])
+  @@map("countries")
+}
+
+// A simple model to track the last global refresh time
+model ApiStatus {
+  id                Int       @id @default(autoincrement())
+  key               String    @unique @default("global")
+  last_refreshed_at DateTime?
+  total_countries   Int       @default(0)
+}

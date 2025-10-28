@@ -1,0 +1,18 @@
+# docker-compose.yml
+version: '3.8'
+services:
+  db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE # A fix for some MySQL 8.0 issues
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'hng_stage2'
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD} # Use the variable from .env
+    ports:
+      - '3306:3306' # Maps your machine's port 3306 to the container's port
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
