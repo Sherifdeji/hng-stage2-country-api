@@ -1,9 +1,9 @@
 import axios from 'axios';
 import prisma from '../config/prisma';
-import { Prisma } from '@prisma/client';
 
 import { CountryApiResponse, ExchangeRateApiResponse } from '../utils/types';
 import { AppError } from '../utils/errorHandler';
+import { generateSummaryImage } from './imageService';
 
 // --- API URLs ---
 const COUNTRIES_API_URL =
@@ -113,6 +113,21 @@ export async function refreshCountryData() {
   });
 
   // TODO: Add image generation logic here later
+  // --- Image Generation Step ---
 
-  return { totalCountries, lastRefreshedAt };
+  // 1. Fetch the data needed for the image here.
+  const topCountriesForImage = await prisma.country.findMany({
+    orderBy: { estimated_gdp: 'desc' },
+    take: 5,
+    where: { estimated_gdp: { not: null } },
+  });
+
+  // 2. Pass all required data to the image service.
+  await generateSummaryImage(
+    totalCountries,
+    completionTimestamp,
+    topCountriesForImage
+  );
+
+  return { totalCountries, lastRefreshedAt: completionTimestamp };
 }
