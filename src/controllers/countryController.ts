@@ -14,3 +14,11 @@ export const refreshCountriesController = async (
     last_refreshed_at: lastRefreshedAt.toISOString(),
   });
 };
+
+export const getAllCountriesController = async (
+  req: Request,
+  res: Response
+) => {
+  const countries = await countryService.getAllCountries(req.query);
+  res.status(200).json(countries);
+};

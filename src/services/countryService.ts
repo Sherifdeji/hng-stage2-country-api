@@ -1,5 +1,6 @@
 import axios from 'axios';
 import prisma from '../config/prisma';
+import { Prisma } from '@prisma/client';
 
 import { CountryApiResponse, ExchangeRateApiResponse } from '../utils/types';
 import { AppError } from '../utils/errorHandler';
@@ -112,7 +113,6 @@ export async function refreshCountryData() {
     },
   });
 
-  // TODO: Add image generation logic here later
   // --- Image Generation Step ---
 
   // 1. Fetch the data needed for the image here.
@@ -130,4 +130,41 @@ export async function refreshCountryData() {
   );
 
   return { totalCountries, lastRefreshedAt: completionTimestamp };
+}
+
+export async function getAllCountries(query: {
+  region?: string;
+  currency?: string;
+  sort?: string;
+}) {
+  const where: Prisma.CountryWhereInput = {};
+
+  // Apply filters if they exist
+  if (query.region) {
+    where.region = { equals: query.region };
+  }
+  if (query.currency) {
+    where.currency_code = { equals: query.currency };
+  }
+
+  // Apply sorting if it exists
+  const orderBy: Prisma.CountryOrderByWithRelationInput = {};
+  if (query.sort === 'gdp_desc') {
+    orderBy.estimated_gdp = 'desc';
+  } else if (query.sort === 'gdp_asc') {
+    orderBy.estimated_gdp = 'asc';
+  }
+
+  const countries = await prisma.country.findMany({
+    where,
+    orderBy,
+  });
+
+  // IMPORTANT: Convert data to be JSON-safe before returning
+  return countries.map(country => ({
+    ...country,
+    // Convert Float types from Prisma back to standard numbers for the response
+    exchange_rate: country.exchange_rate,
+    estimated_gdp: country.estimated_gdp,
+  }));
 }
