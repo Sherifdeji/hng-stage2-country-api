@@ -22,3 +22,12 @@ export const getAllCountriesController = async (
   const countries = await countryService.getAllCountries(req.query);
   res.status(200).json(countries);
 };
+
+export const getCountryByNameController = async (
+  req: Request,
+  res: Response
+) => {
+  const { name } = req.params;
+  const country = await countryService.getCountryByName(name);
+  res.status(200).json(country);
+};

@@ -168,3 +168,21 @@ export async function getAllCountries(query: {
     estimated_gdp: country.estimated_gdp,
   }));
 }
+
+export async function getCountryByName(name: string) {
+  const country = await prisma.country.findUnique({
+    where: { name },
+  });
+
+  // If no country is found, throw a specific error that our handler will catch.
+  if (!country) {
+    throw new AppError(404, 'Country not found');
+  }
+
+  // Convert data to be JSON-safe before returning
+  return {
+    ...country,
+    exchange_rate: country.exchange_rate,
+    estimated_gdp: country.estimated_gdp,
+  };
+}
