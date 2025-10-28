@@ -56,10 +56,7 @@ export const getSummaryImageController = (req: Request, res: Response) => {
 
   // Check if the file exists
   if (!fs.existsSync(imagePath)) {
-    throw new AppError(
-      404,
-      'Summary image not found. Please run the refresh endpoint first.'
-    );
+    throw new AppError(404, 'Summary image not found');
   }
 
   // Send the file as the response

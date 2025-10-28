@@ -31,7 +31,8 @@ export async function fetchExternalData() {
         : 'Exchange Rate API';
       throw new AppError(
         503,
-        `External data source unavailable: Could not fetch data from ${apiName}`
+        'External data source unavailable',
+        `Could not fetch data from ${apiName}`
       );
     }
     // For any other unexpected errors
@@ -215,5 +216,8 @@ export async function getApiStatus() {
     );
   }
 
-  return status;
+  return {
+    total_countries: status.total_countries,
+    last_refreshed_at: status.last_refreshed_at,
+  };
 }
