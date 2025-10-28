@@ -31,3 +31,12 @@ export const getCountryByNameController = async (
   const country = await countryService.getCountryByName(name);
   res.status(200).json(country);
 };
+
+export const deleteCountryByNameController = async (
+  req: Request,
+  res: Response
+) => {
+  const { name } = req.params;
+  await countryService.deleteCountryByName(name);
+  res.status(204).send();
+};

@@ -186,3 +186,19 @@ export async function getCountryByName(name: string) {
     estimated_gdp: country.estimated_gdp,
   };
 }
+
+export async function deleteCountryByName(name: string) {
+  try {
+    await prisma.country.delete({
+      where: { name },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      throw new AppError(404, 'Country not found');
+    }
+    throw error;
+  }
+}
