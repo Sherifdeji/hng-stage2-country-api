@@ -36,10 +36,15 @@ export async function fetchExternalData() {
       );
     }
     // For any other unexpected errors
-    throw new AppError(
-      500,
-      'An unexpected error occurred while fetching external data.'
-    );
+    if (error instanceof Error) {
+      throw new AppError(
+        500,
+        'An unexpected error occurred while fetching external data.',
+        error.message
+      );
+    }
+    // Fallback for non-Error types
+    throw new AppError(500, 'Internal server error');
   }
 }
 
