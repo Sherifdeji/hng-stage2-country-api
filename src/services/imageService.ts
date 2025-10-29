@@ -23,11 +23,11 @@ export async function generateSummaryImage(
 
   // Title
   context.fillStyle = '#333';
-  context.font = 'bold 30px Sans';
+  context.font = 'bold 30px sans-serif';
   context.fillText('Country Data Summary', 50, 60);
 
   // Stats
-  context.font = '20px Sans';
+  context.font = '20px sans-serif';
   context.fillText(`Total Countries: ${totalCountries}`, 50, 120);
   context.fillText(
     `Last Refresh: ${dayjs(lastRefreshedAt).format('YYYY-MM-DD HH:mm:ss')} UTC`,
@@ -36,9 +36,9 @@ export async function generateSummaryImage(
   );
 
   // Top 5
-  context.font = 'bold 22px Sans';
+  context.font = 'bold 22px sans-serif';
   context.fillText('Top 5 Countries by Estimated GDP (USD)', 50, 220);
-  context.font = '18px Sans';
+  context.font = '18px sans-serif';
   let yPos = 260;
   topCountries.forEach((country, index) => {
     const gdp = country.estimated_gdp
